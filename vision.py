@@ -1,9 +1,10 @@
 import io
 import os
+import webbrowser
 import time
 
 import pyscreenshot as ImageGrab
-# from PIL import Image     # testing
+from PIL import Image                # testing
 
 # Imports the Google Cloud client library
 from google.cloud import vision
@@ -17,8 +18,8 @@ def take_screenshots():
     if __name__ == '__main__':
 
         # grab fullscreen
-        img = ImageGrab.grab()
-        # img = Image.open("tests/test1.png")     # testing
+        # img = ImageGrab.grab()
+        img = Image.open("tests/test10.png")     # testing
 
         # Crop the question
         question = img.crop((15, 170, 400, 520))
@@ -27,7 +28,14 @@ def take_screenshots():
         question.save("live.bmp")
 
 
-def detect_text_uri():
+def build_google_search(query):
+    search_url = "https://www.google.ca/search?q="
+    for i in query.split():
+        search_url += i + "+"
+    return search_url
+
+
+def detect_text_uri(openBrowser=False):
     """Detects text in the file located in Google Cloud Storage or on the Web.
     """
 
@@ -48,19 +56,28 @@ def detect_text_uri():
 
     print('Texts:')
 
-    for text in texts:
-        print('\n"{}"'.format(text.description))
+    # choices =
 
-        vertices = (['({},{})'.format(vertex.x, vertex.y)
-                    for vertex in text.bounding_poly.vertices])
+    lines = texts[0].description.split('\n')
 
-        print('bounds: {}'.format(','.join(vertices)))
+    question = ""
+    for i in range(len(lines) - 4):
+        question += lines[i] + " "
+    question = str(question)
+
+    answers = (str(lines[len(lines) - 4]), str(lines[len(lines) - 3]), str(lines[len(lines) - 2]))
+
+    if openBrowser:
+        webbrowser.open(build_google_search(question), new=0, autoraise=True)
+
+    return question, answers
 
 
 run = raw_input("Start? > ")
+
 start_time = time.time()
 
 take_screenshots()
-detect_text_uri()
+print detect_text_uri(True)
 
 print("Runtime:" + str(time.time() - start_time))
