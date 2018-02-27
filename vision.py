@@ -2,6 +2,7 @@ import io
 import os
 import webbrowser
 import time
+import sys
 
 import pyscreenshot as ImageGrab
 from PIL import Image                # testing
@@ -18,11 +19,15 @@ def take_screenshots():
     if __name__ == '__main__':
 
         # grab fullscreen
-        # img = ImageGrab.grab()
-        img = Image.open("tests/test10.png")     # testing
+        img = ImageGrab.grab()                     # Live
+        # img = Image.open("tests/test7.png")        # Testing A
+        # img = Image.open("tests_alt/test2.png")    # Testing B
 
         # Crop the question
-        question = img.crop((15, 170, 400, 520))
+        if len(sys.argv) > 1 and sys.argv[1] == 1:
+            question = img.crop((15, 170, 400, 520))    # Question and answers
+        else:
+            question = img.crop((15, 390, 400, 750))    # Question and answers
 
         # Save a file with just the question
         question.save("live.bmp")
@@ -54,23 +59,21 @@ def detect_text_uri(openBrowser=False):
     response = client.text_detection(image=image)
     texts = response.text_annotations
 
-    print('Texts:')
-
-    # choices =
-
     lines = texts[0].description.split('\n')
 
     question = ""
     for i in range(len(lines) - 4):
-        question += lines[i] + " "
-    question = str(question)
+        question += str(lines[i]) + " "
 
     answers = (str(lines[len(lines) - 4]), str(lines[len(lines) - 3]), str(lines[len(lines) - 2]))
 
     if openBrowser:
         webbrowser.open(build_google_search(question), new=0, autoraise=True)
 
-    return question, answers
+    print question
+    print answers
+
+    # return question, answers
 
 
 run = raw_input("Start? > ")
@@ -78,6 +81,6 @@ run = raw_input("Start? > ")
 start_time = time.time()
 
 take_screenshots()
-print detect_text_uri(True)
+detect_text_uri(True)
 
 print("Runtime:" + str(time.time() - start_time))
