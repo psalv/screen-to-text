@@ -24,10 +24,10 @@ def take_screenshots():
         # img = Image.open("tests_alt/test2.png")    # Testing B
 
         # Crop the question
-        if len(sys.argv) > 1 and sys.argv[1] == 1:
-            question = img.crop((15, 170, 400, 520))    # Question and answers
+        if len(sys.argv) > 1 and sys.argv[1] == '1':
+            question = img.crop((15, 390, 400, 750))    # B
         else:
-            question = img.crop((15, 390, 400, 750))    # Question and answers
+            question = img.crop((15, 170, 400, 520))    # A
 
         # Save a file with just the question
         question.save("live.bmp")
